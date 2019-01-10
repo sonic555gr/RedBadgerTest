@@ -8,12 +8,24 @@
 
 import Foundation
 
-struct Point {
+enum NavigationError: Error {
+    case RobotOutOfBounds(positionDescription: String)
+}
+
+struct Point: Equatable {
     var xCoordinate: Int
     var yCoordinate: Int
     init(_ xCoordinate: Int, _ yCoordinate: Int) {
         self.xCoordinate = xCoordinate
         self.yCoordinate = yCoordinate
+    }
+    
+    func description() -> String {
+        return "\(xCoordinate) \(yCoordinate)"
+    }
+    
+    static func ==(lhs: Point, rhs: Point) -> Bool {
+        return lhs.xCoordinate == rhs.xCoordinate && lhs.yCoordinate == rhs.yCoordinate
     }
 }
 
@@ -30,7 +42,7 @@ enum Command: String {
     case F = "F"
 }
 
-struct Robot {
+class Robot {
     let startPoint: Point
     let startDirection: Direction
     var currentPoint: Point
@@ -43,27 +55,33 @@ struct Robot {
         self.currentDirection = startDirection
     }
     
-    mutating func moveForward() {
+    func nextLocation() -> Point {
+        var nextPoint = currentPoint
         switch currentDirection {
         case .N:
-            currentPoint.yCoordinate = currentPoint.yCoordinate + 1
+            nextPoint.yCoordinate = currentPoint.yCoordinate + 1
         case .E:
-            currentPoint.xCoordinate = currentPoint.xCoordinate + 1
+            nextPoint.xCoordinate = currentPoint.xCoordinate + 1
         case .S:
-            currentPoint.yCoordinate = currentPoint.yCoordinate - 1
+            nextPoint.yCoordinate = currentPoint.yCoordinate - 1
         case .W:
-            currentPoint.xCoordinate = currentPoint.xCoordinate - 1
+            nextPoint.xCoordinate = currentPoint.xCoordinate - 1
         }
+        return nextPoint
     }
     
-    mutating func turnLeft() {
+    func moveForward() {
+        self.currentPoint = nextLocation()
+    }
+    
+    func turnLeft() {
         turn(to: currentDirection.rawValue - 1)
     }
-    mutating func turnRight() {
+    func turnRight() {
         turn(to: currentDirection.rawValue + 1)
     }
     
-    private mutating func turn(to value: Int) {
+    private func turn(to value: Int) {
         var newDirectionValue = value
         if newDirectionValue < 0 {
             newDirectionValue = 3
@@ -73,37 +91,88 @@ struct Robot {
         }
         currentDirection = Direction(rawValue: newDirectionValue)!
     }
+    
+    func description() -> String {
+        return "\(currentPoint.description()) \(currentDirection)"
+    }
 }
 
-class Navigator {
-    let gridWidth: Int
-    let gridHeight: Int
-    var robot: Robot
-    init(gridWidth: Int, gridHeight: Int, robot: Robot) {
+public class Navigator {
+    internal let gridWidth: Int
+    internal let gridHeight: Int
+    internal var robot: Robot?
+    internal var lostRobotPositions: [Point] = []
+    
+    init(gridWidth: Int, gridHeight: Int) {
         self.gridWidth = gridWidth
         self.gridHeight = gridHeight
+    }
+    
+    func addRobot(_ robot: Robot) {
+        if self.robot != nil { return }
         self.robot = robot
     }
     
-    func strippedStringCommand(from stringCommand: String) -> String {
+    internal func strippedCommandString(from commandString: String) -> String {
         let disallowedCharacters = CharacterSet(charactersIn: "LRF").inverted
-        let filteredCommand = stringCommand.uppercased().filter { (character) -> Bool in
+        let filteredCommand = commandString.uppercased().filter { (character) -> Bool in
             return character.unicodeScalars.contains(where: { !disallowedCharacters.contains($0)})
         }
         return filteredCommand
     }
     
-    func executeCommand(_ stringCommand: String) {
-        stringCommand.forEach { (character) in
-            let command = Command(rawValue: "\(character)")!
+    internal func parseCommandString(_ commandString: String) -> [Command]  {
+        return commandString.map{ Command(rawValue: "\($0)")! }
+    }
+    
+    internal func executeCommands(_ commands: [Command]) throws {
+        guard let robot = robot else { return }
+        for command in commands {
             switch command {
             case .L :
                 robot.turnLeft()
             case .R:
                 robot.turnRight()
             case .F:
+                if lostRobotPositions.contains(robot.nextLocation()) {
+                    continue
+                }
+                if isPositionOutOfBounds(robot.nextLocation()) {
+                    lostRobotPositions.append(robot.nextLocation())
+                    let currentPoint = robot.currentPoint
+                    self.robot = nil
+                    throw NavigationError.RobotOutOfBounds(positionDescription: currentPoint.description())
+                }
                 robot.moveForward()
             }
         }
+    }
+    
+    public func performCommandString(_ commandString: String) {
+        let strippedCommandString = self.strippedCommandString(from: commandString)
+        let commands = parseCommandString(strippedCommandString)
+        guard let robot = robot else { return }
+        do {
+            try executeCommands(commands)
+            print(robot.description())
+        }
+            
+        catch NavigationError.RobotOutOfBounds(let positionDescription) {
+            print("\(positionDescription) LOST")
+        }
+        catch {
+        }
+    }
+    
+    internal func isRobotWherePreviousRobotDisappeared(_ robot: Robot) -> Bool {
+        return lostRobotPositions.contains(where: {
+            robot.currentPoint.xCoordinate == $0.xCoordinate && robot.currentPoint.yCoordinate == $0.yCoordinate
+        })
+    }
+    
+    internal func isPositionOutOfBounds(_ position: Point) -> Bool {
+        let isWithinWidthBounds = position.xCoordinate < gridWidth && position.xCoordinate >= 0
+        let isWithinHeightBounds = position.yCoordinate < gridHeight && position.yCoordinate >= 0
+        return !isWithinWidthBounds || !isWithinHeightBounds
     }
 }

@@ -20,14 +20,14 @@ class RobotsOnMarsTests: XCTestCase {
     }
     
     func testRobotTurnsLeftTwiceFromNorthSetsDirectionToSouth() {
-        var robot = Robot(Point(0, 0), .N)
+        let robot = Robot(Point(0, 0), .N)
         robot.turnLeft()
         robot.turnLeft()
         XCTAssertEqual(robot.currentDirection, .S)
     }
     
     func testRobotHasThesameDirectionAfterBeingTurned4TimesLeftStartingNorth() {
-        var robot = Robot(Point(0, 0), .N)
+        let robot = Robot(Point(0, 0), .N)
         robot.turnLeft()
         robot.turnLeft()
         robot.turnLeft()
@@ -36,7 +36,7 @@ class RobotsOnMarsTests: XCTestCase {
     }
     
     func testRobotHasTheSameDirectionAfterBeingTurned4TimesRightStartingNorth() {
-        var robot = Robot(Point(0, 0), .N)
+        let robot = Robot(Point(0, 0), .N)
         robot.turnRight()
         robot.turnRight()
         robot.turnRight()
@@ -45,34 +45,73 @@ class RobotsOnMarsTests: XCTestCase {
     }
     
     func testRobotHasTheSameDirectionAfterBeingTurned4TimesRightStartingEast() {
-        var robot = Robot(Point(0, 0), .E)
+        let robot = Robot(Point(0, 0), .E)
         robot.turnRight()
         robot.turnRight()
         robot.turnRight()
         robot.turnRight()
         XCTAssertEqual(robot.currentDirection, .E)
     }
+    
+    func testRobotNextLocationForEachDirectionIsCorrect() {
+        var robot = Robot(Point(0, 0), .E)
+        XCTAssertEqual(robot.nextLocation(), Point(1, 0))
+        robot = Robot(Point(0, 0), .W)
+        XCTAssertEqual(robot.nextLocation(), Point(-1, 0))
+        robot = Robot(Point(0, 0), .N)
+        XCTAssertEqual(robot.nextLocation(), Point(0, 1))
+        robot = Robot(Point(0, 0), .S)
+        XCTAssertEqual(robot.nextLocation(), Point(0, -1))
+    }
 }
 
 extension RobotsOnMarsTests {
     func testNavigatorStrippedStringCommandReturnsOnlyLRFForAnyGivenInput() {
-        let navigator = Navigator(gridWidth: 10, gridHeight: 10, robot: Robot(Point(0, 0), .N))
-        var trimmedString = navigator.strippedStringCommand(from: "1234445EEGVCCBE")
+        let navigator = Navigator(gridWidth: 10, gridHeight: 10)
+        navigator.addRobot(Robot(Point(0, 0), .N))
+        var trimmedString = navigator.strippedCommandString(from: "1234445EEGVCCBE")
         XCTAssertTrue(trimmedString.isEmpty)
-        trimmedString = navigator.strippedStringCommand(from: "lLRrFf")
+        trimmedString = navigator.strippedCommandString(from: "lLRrFf")
         XCTAssertEqual(trimmedString, "LLRRFF")
-        trimmedString = navigator.strippedStringCommand(from: "LwLRR33FxF")
+        trimmedString = navigator.strippedCommandString(from: "LwLRR33FxF")
         XCTAssertEqual(trimmedString, "LLRRFF")
     }
 }
 
 extension RobotsOnMarsTests {
-    func testNavigatorMovesRobotWithStringCommand() {
+    func testNavigatorMovesRobotWithCommandString() {
         let robot = Robot(Point(0, 0), .N)
-        let navigator = Navigator(gridWidth: 10, gridHeight: 10, robot: robot)
-        navigator.executeCommand("RFFLFFLFF")
-        XCTAssertEqual(navigator.robot.currentPoint.xCoordinate, 0)
-        XCTAssertEqual(navigator.robot.currentPoint.yCoordinate, 2)
-        XCTAssertEqual(navigator.robot.currentDirection, .W)
+        let navigator = Navigator(gridWidth: 10, gridHeight: 10)
+        navigator.addRobot(robot)
+        navigator.performCommandString("RFFLFFLFF")
+        XCTAssertEqual(navigator.robot!.currentPoint.xCoordinate, 0)
+        XCTAssertEqual(navigator.robot!.currentPoint.yCoordinate, 2)
+        XCTAssertEqual(navigator.robot!.currentDirection, .W)
+    }
+
+    func testNavigatorThrowsErrorWhenRobotOutOfBounds() {
+        let navigator = Navigator(gridWidth: 10, gridHeight: 10)
+        navigator.addRobot(Robot(Point(0, 0), .N))
+        let commands = navigator.parseCommandString("LF")
+        XCTAssertThrowsError(try navigator.executeCommands(commands))
+    }
+    
+    func testNavigatorThrowsErrorWhenRobotOutOfBoundsTopNorth() {
+        let navigator = Navigator(gridWidth: 10, gridHeight: 10)
+        navigator.addRobot(Robot(Point(0, 0), .N))
+        let commands = navigator.parseCommandString("FFFFFFFFFF")
+        XCTAssertThrowsError(try navigator.executeCommands(commands))
+    }
+    
+    func testNavigatorSkipsFowardCommandIfOtherRobotPreviouslyLostInSamePosition() {
+        let navigator = Navigator(gridWidth: 10, gridHeight: 10)
+        var robot = Robot(Point(0,0), .W)
+        navigator.addRobot(robot)
+        navigator.performCommandString("F")
+        robot = Robot(Point(0,0), .W)
+        navigator.addRobot(robot)
+        navigator.performCommandString("FRF")
+        
+        XCTAssertEqual(robot.currentPoint, Point(0, 1))
     }
 }
