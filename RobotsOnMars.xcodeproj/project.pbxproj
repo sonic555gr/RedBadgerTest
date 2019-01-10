@@ -13,6 +13,7 @@
 		7A5F6C7421E7757500101F0C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7A5F6C7321E7757500101F0C /* Assets.xcassets */; };
 		7A5F6C7721E7757500101F0C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7A5F6C7521E7757500101F0C /* LaunchScreen.storyboard */; };
 		7A5F6C8221E7757500101F0C /* RobotsOnMarsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5F6C8121E7757500101F0C /* RobotsOnMarsTests.swift */; };
+		7A5F6C8E21E7761C00101F0C /* Navigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5F6C8D21E7761C00101F0C /* Navigator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +37,7 @@
 		7A5F6C7D21E7757500101F0C /* RobotsOnMarsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RobotsOnMarsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A5F6C8121E7757500101F0C /* RobotsOnMarsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotsOnMarsTests.swift; sourceTree = "<group>"; };
 		7A5F6C8321E7757500101F0C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7A5F6C8D21E7761C00101F0C /* Navigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +79,7 @@
 		7A5F6C6B21E7757300101F0C /* RobotsOnMars */ = {
 			isa = PBXGroup;
 			children = (
+				7A5F6C8C21E775FB00101F0C /* Classes */,
 				7A5F6C6C21E7757300101F0C /* AppDelegate.swift */,
 				7A5F6C6E21E7757300101F0C /* ViewController.swift */,
 				7A5F6C7021E7757300101F0C /* Main.storyboard */,
@@ -94,6 +97,14 @@
 				7A5F6C8321E7757500101F0C /* Info.plist */,
 			);
 			path = RobotsOnMarsTests;
+			sourceTree = "<group>";
+		};
+		7A5F6C8C21E775FB00101F0C /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				7A5F6C8D21E7761C00101F0C /* Navigator.swift */,
+			);
+			path = Classes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -199,6 +210,7 @@
 			files = (
 				7A5F6C6F21E7757300101F0C /* ViewController.swift in Sources */,
 				7A5F6C6D21E7757300101F0C /* AppDelegate.swift in Sources */,
+				7A5F6C8E21E7761C00101F0C /* Navigator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

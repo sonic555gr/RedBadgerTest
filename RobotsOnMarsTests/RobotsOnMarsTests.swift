@@ -18,17 +18,38 @@ class RobotsOnMarsTests: XCTestCase {
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    
+    func testRobotTurnsLeftTwiceFromNorthSetsDirectionToSouth() {
+        var robot = Robot(Point(0, 0), .N)
+        robot.turnLeft()
+        robot.turnLeft()
+        XCTAssertEqual(robot.currentDirection, .S)
     }
-
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    
+    func testRobotHasThesameDirectionAfterBeingTurned4TimesLeftStartingNorth() {
+        var robot = Robot(Point(0, 0), .N)
+        robot.turnLeft()
+        robot.turnLeft()
+        robot.turnLeft()
+        robot.turnLeft()
+        XCTAssertEqual(robot.currentDirection, .N)
     }
-
+    
+    func testRobotHasTheSameDirectionAfterBeingTurned4TimesRightStartingNorth() {
+        var robot = Robot(Point(0, 0), .N)
+        robot.turnRight()
+        robot.turnRight()
+        robot.turnRight()
+        robot.turnRight()
+        XCTAssertEqual(robot.currentDirection, .N)
+    }
+    
+    func testRobotHasTheSameDirectionAfterBeingTurned4TimesRightStartingEast() {
+        var robot = Robot(Point(0, 0), .E)
+        robot.turnRight()
+        robot.turnRight()
+        robot.turnRight()
+        robot.turnRight()
+        XCTAssertEqual(robot.currentDirection, .E)
+    }
 }
