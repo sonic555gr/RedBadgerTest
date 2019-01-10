@@ -8,6 +8,10 @@
 
 import Foundation
 
+protocol NavigatorLogger: class {
+    func navigatorWantsToLog(message: String)
+}
+
 enum NavigationError: Error {
     case RobotOutOfBounds(positionDescription: String)
 }
@@ -34,6 +38,20 @@ enum Direction: Int {
     case E = 1
     case S = 2
     case W = 3
+    
+    func description() -> String {
+        switch self {
+        case .N:
+            return "North"
+        case .E:
+            return "East"
+        case .S:
+            return "South"
+        case .W:
+            return "West"
+        }
+    }
+    
 }
 
 enum Command: String {
@@ -102,15 +120,18 @@ public class Navigator {
     internal let gridHeight: Int
     internal var robot: Robot?
     internal var lostRobotPositions: [Point] = []
+    weak var loggerDelegate: NavigatorLogger?
     
-    init(gridWidth: Int, gridHeight: Int) {
+    init(gridWidth: Int, gridHeight: Int, delegate: NavigatorLogger? = nil) {
         self.gridWidth = gridWidth
         self.gridHeight = gridHeight
+        loggerDelegate = delegate
     }
     
     func addRobot(_ robot: Robot) {
         if self.robot != nil { return }
         self.robot = robot
+        loggerDelegate?.navigatorWantsToLog(message: "New robot was created at x: \(robot.currentPoint.xCoordinate), y: \(robot.currentPoint.yCoordinate), facing \(robot.currentDirection.description())")
     }
     
     internal func strippedCommandString(from commandString: String) -> String {
@@ -154,11 +175,11 @@ public class Navigator {
         guard let robot = robot else { return }
         do {
             try executeCommands(commands)
-            print(robot.description())
+            loggerDelegate?.navigatorWantsToLog(message:  robot.description())
         }
             
         catch NavigationError.RobotOutOfBounds(let positionDescription) {
-            print("\(positionDescription) LOST")
+            loggerDelegate?.navigatorWantsToLog(message: "\(positionDescription) LOST")
         }
         catch {
         }
