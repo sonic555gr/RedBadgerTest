@@ -53,3 +53,26 @@ class RobotsOnMarsTests: XCTestCase {
         XCTAssertEqual(robot.currentDirection, .E)
     }
 }
+
+extension RobotsOnMarsTests {
+    func testNavigatorStrippedStringCommandReturnsOnlyLRFForAnyGivenInput() {
+        let navigator = Navigator(gridWidth: 10, gridHeight: 10, robot: Robot(Point(0, 0), .N))
+        var trimmedString = navigator.strippedStringCommand(from: "1234445EEGVCCBE")
+        XCTAssertTrue(trimmedString.isEmpty)
+        trimmedString = navigator.strippedStringCommand(from: "lLRrFf")
+        XCTAssertEqual(trimmedString, "LLRRFF")
+        trimmedString = navigator.strippedStringCommand(from: "LwLRR33FxF")
+        XCTAssertEqual(trimmedString, "LLRRFF")
+    }
+}
+
+extension RobotsOnMarsTests {
+    func testNavigatorMovesRobotWithStringCommand() {
+        let robot = Robot(Point(0, 0), .N)
+        let navigator = Navigator(gridWidth: 10, gridHeight: 10, robot: robot)
+        navigator.executeCommand("RFFLFFLFF")
+        XCTAssertEqual(navigator.robot.currentPoint.xCoordinate, 0)
+        XCTAssertEqual(navigator.robot.currentPoint.yCoordinate, 2)
+        XCTAssertEqual(navigator.robot.currentDirection, .W)
+    }
+}

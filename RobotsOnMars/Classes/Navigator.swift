@@ -24,8 +24,10 @@ enum Direction: Int {
     case W = 3
 }
 
-struct MoveCommand {
-    let commands: [String]
+enum Command: String {
+    case L = "L"
+    case R = "R"
+    case F = "F"
 }
 
 struct Robot {
@@ -70,5 +72,38 @@ struct Robot {
             newDirectionValue  = 0
         }
         currentDirection = Direction(rawValue: newDirectionValue)!
+    }
+}
+
+class Navigator {
+    let gridWidth: Int
+    let gridHeight: Int
+    var robot: Robot
+    init(gridWidth: Int, gridHeight: Int, robot: Robot) {
+        self.gridWidth = gridWidth
+        self.gridHeight = gridHeight
+        self.robot = robot
+    }
+    
+    func strippedStringCommand(from stringCommand: String) -> String {
+        let disallowedCharacters = CharacterSet(charactersIn: "LRF").inverted
+        let filteredCommand = stringCommand.uppercased().filter { (character) -> Bool in
+            return character.unicodeScalars.contains(where: { !disallowedCharacters.contains($0)})
+        }
+        return filteredCommand
+    }
+    
+    func executeCommand(_ stringCommand: String) {
+        stringCommand.forEach { (character) in
+            let command = Command(rawValue: "\(character)")!
+            switch command {
+            case .L :
+                robot.turnLeft()
+            case .R:
+                robot.turnRight()
+            case .F:
+                robot.moveForward()
+            }
+        }
     }
 }
