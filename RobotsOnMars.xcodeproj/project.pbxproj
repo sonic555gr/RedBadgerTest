@@ -14,6 +14,7 @@
 		7A5F6C7721E7757500101F0C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7A5F6C7521E7757500101F0C /* LaunchScreen.storyboard */; };
 		7A5F6C8221E7757500101F0C /* RobotsOnMarsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5F6C8121E7757500101F0C /* RobotsOnMarsTests.swift */; };
 		7A5F6C8E21E7761C00101F0C /* Navigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5F6C8D21E7761C00101F0C /* Navigator.swift */; };
+		7A5F6C9021E7DA4700101F0C /* Robot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5F6C8F21E7DA4700101F0C /* Robot.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +39,7 @@
 		7A5F6C8121E7757500101F0C /* RobotsOnMarsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotsOnMarsTests.swift; sourceTree = "<group>"; };
 		7A5F6C8321E7757500101F0C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7A5F6C8D21E7761C00101F0C /* Navigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigator.swift; sourceTree = "<group>"; };
+		7A5F6C8F21E7DA4700101F0C /* Robot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Robot.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				7A5F6C8D21E7761C00101F0C /* Navigator.swift */,
+				7A5F6C8F21E7DA4700101F0C /* Robot.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -208,6 +211,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7A5F6C9021E7DA4700101F0C /* Robot.swift in Sources */,
 				7A5F6C6F21E7757300101F0C /* ViewController.swift in Sources */,
 				7A5F6C6D21E7757300101F0C /* AppDelegate.swift in Sources */,
 				7A5F6C8E21E7761C00101F0C /* Navigator.swift in Sources */,
